@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "organization": "erkamyaman",
+  "date": "February 2026",
+  "abstract": "Complete guide for building production-ready Ionic Capacitor mobile apps with Angular, React, or Vue. Covers onboarding with video background, RevenueCat paywall with subscriptions, AdMob banner ads, i18n localization, theme switching (Light/Dark/System), push notifications, and tab navigation.",
+  "triggers": [
+    "ionic app",
+    "capacitor angular",
+    "capacitor react",
+    "capacitor vue",
+    "ionic capacitor",
+    "create ionic app",
+    "angular mobile app",
+    "react mobile app",
+    "vue mobile app",
+    "ionic onboarding",
+    "ionic paywall",
+    "revenuecat ionic",
+    "admob ionic",
+    "ionic tabs",
+    "ionic react",
+    "ionic vue",
+    "ionic angular"
+  ],
+  "references": [
+    "https://ionicframework.com/docs",
+    "https://capacitorjs.com/docs",
+    "https://angular.dev",
+    "https://react.dev",
+    "https://vuejs.org",
+    "https://www.revenuecat.com/docs",
+    "https://github.com/nicol-ograve/capacitor-community-admob"
+  ]
+}
