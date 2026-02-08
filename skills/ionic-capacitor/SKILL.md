@@ -81,6 +81,7 @@ npm install @capacitor/preferences @capacitor/push-notifications @capacitor/spla
 
 - ❌ NgModules for new pages/components - Use standalone components
 - ❌ `IonicModule` in standalone components - Import individual components (`IonButton`, `IonContent`, etc.)
+- ❌ Inline `template` or `styles` in `@Component` - Use separate `.html`, `.ts`, `.scss` files with `templateUrl` and `styleUrls`
 - ❌ `@angular/http` (deprecated) - Use `@angular/common/http`
 
 ### React-Specific
@@ -183,21 +184,34 @@ project-root/
 ├── src/
 │   ├── app/
 │   │   ├── app.component.ts
+│   │   ├── app.component.html
 │   │   ├── app.config.ts
 │   │   ├── app.routes.ts
 │   │   ├── tabs/
 │   │   │   ├── tabs.page.ts
+│   │   │   ├── tabs.page.html
+│   │   │   ├── tabs.page.scss
 │   │   │   └── tabs.routes.ts
 │   │   ├── home/
-│   │   │   └── home.page.ts
+│   │   │   ├── home.page.ts
+│   │   │   ├── home.page.html
+│   │   │   └── home.page.scss
 │   │   ├── explore/
-│   │   │   └── explore.page.ts
+│   │   │   ├── explore.page.ts
+│   │   │   ├── explore.page.html
+│   │   │   └── explore.page.scss
 │   │   ├── settings/
-│   │   │   └── settings.page.ts
+│   │   │   ├── settings.page.ts
+│   │   │   ├── settings.page.html
+│   │   │   └── settings.page.scss
 │   │   ├── paywall/
-│   │   │   └── paywall.page.ts
+│   │   │   ├── paywall.page.ts
+│   │   │   ├── paywall.page.html
+│   │   │   └── paywall.page.scss
 │   │   ├── onboarding/
-│   │   │   └── onboarding.page.ts
+│   │   │   ├── onboarding.page.ts
+│   │   │   ├── onboarding.page.html
+│   │   │   └── onboarding.page.scss
 │   │   ├── services/
 │   │   │   ├── theme.service.ts
 │   │   │   ├── onboarding.service.ts
@@ -354,6 +368,13 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
+```html
+<!-- app.component.html -->
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>
+```
+
 ```typescript
 // app.component.ts
 import { Component, OnInit } from '@angular/core';
@@ -364,11 +385,7 @@ import { AdsService } from './services/ads.service';
   selector: 'app-root',
   standalone: true,
   imports: [IonApp, IonRouterOutlet],
-  template: `
-    <ion-app>
-      <ion-router-outlet></ion-router-outlet>
-    </ion-app>
-  `,
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
   constructor(private adsService: AdsService) {}
@@ -1329,6 +1346,54 @@ Do NOT just reference the video without actually rendering the `<video>` element
 
 ### Onboarding Page (Angular)
 
+```html
+<!-- onboarding/onboarding.page.html -->
+<ion-content [fullscreen]="true" class="onboarding-content">
+  <video
+    #bgVideo
+    [src]="videoUrl"
+    autoplay
+    loop
+    muted
+    playsinline
+    class="background-video"
+  ></video>
+  <div class="gradient-overlay"></div>
+  <div class="onboarding-slides">
+    <!-- Swiper slides content here -->
+  </div>
+</ion-content>
+```
+
+```scss
+// onboarding/onboarding.page.scss
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+  z-index: 1;
+}
+
+.onboarding-slides {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+```
+
 ```typescript
 // onboarding/onboarding.page.ts
 import { Component } from '@angular/core';
@@ -1343,44 +1408,8 @@ const VIDEO_URL =
   selector: 'app-onboarding',
   standalone: true,
   imports: [IonContent, IonButton, IonIcon],
-  template: `
-    <ion-content [fullscreen]="true" class="onboarding-content">
-      <video
-        #bgVideo
-        [src]="videoUrl"
-        autoplay
-        loop
-        muted
-        playsinline
-        class="background-video"
-      ></video>
-      <div class="gradient-overlay"></div>
-      <div class="onboarding-slides">
-        <!-- Swiper slides content here -->
-      </div>
-    </ion-content>
-  `,
-  styles: [`
-    .background-video {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: 0;
-    }
-    .gradient-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
-      z-index: 1;
-    }
-    .onboarding-slides {
-      position: relative;
-      z-index: 2;
-      height: 100%;
-    }
-  `]
+  templateUrl: './onboarding.page.html',
+  styleUrls: ['./onboarding.page.scss'],
 })
 export class OnboardingPage {
   videoUrl = VIDEO_URL;
@@ -1517,6 +1546,59 @@ Flow: `Onboarding -> Paywall -> Main App (tabs)`
 
 ### Paywall Page (Angular)
 
+```html
+<!-- paywall/paywall.page.html -->
+<ion-content [fullscreen]="true">
+  <div class="paywall-container">
+    <h1>{{ 'paywall.title' | translate }}</h1>
+
+    <div class="subscription-options">
+      <div
+        *ngFor="let option of subscriptionOptions"
+        class="option-card"
+        [class.selected]="selectedPlan === option.id"
+        (click)="selectedPlan = option.id"
+      >
+        <ion-badge *ngIf="option.badge" color="danger">{{ option.badge }}</ion-badge>
+        <h3>{{ option.title | translate }}</h3>
+        <p>{{ option.price }}</p>
+      </div>
+    </div>
+
+    <ion-button expand="block" (click)="subscribe()">
+      {{ 'paywall.subscribe' | translate }}
+    </ion-button>
+
+    <ion-button fill="clear" (click)="skip()">
+      {{ 'paywall.skip' | translate }}
+    </ion-button>
+
+    <ion-button fill="clear" size="small" (click)="restore()">
+      {{ 'paywall.restore' | translate }}
+    </ion-button>
+  </div>
+</ion-content>
+```
+
+```scss
+// paywall/paywall.page.scss
+.paywall-container {
+  // Add your paywall styles here
+}
+
+.subscription-options {
+  // Add your subscription options styles here
+}
+
+.option-card {
+  // Add your option card styles here
+
+  &.selected {
+    // Selected state styles
+  }
+}
+```
+
 ```typescript
 // paywall/paywall.page.ts
 import { Component } from '@angular/core';
@@ -1535,38 +1617,8 @@ import { PurchasesService } from '../services/purchases.service';
     IonContent, IonButton, IonIcon, IonBadge,
     NgFor, NgIf, NgClass, TranslateModule,
   ],
-  template: `
-    <ion-content [fullscreen]="true">
-      <div class="paywall-container">
-        <h1>{{ 'paywall.title' | translate }}</h1>
-
-        <div class="subscription-options">
-          <div
-            *ngFor="let option of subscriptionOptions"
-            class="option-card"
-            [class.selected]="selectedPlan === option.id"
-            (click)="selectedPlan = option.id"
-          >
-            <ion-badge *ngIf="option.badge" color="danger">{{ option.badge }}</ion-badge>
-            <h3>{{ option.title | translate }}</h3>
-            <p>{{ option.price }}</p>
-          </div>
-        </div>
-
-        <ion-button expand="block" (click)="subscribe()">
-          {{ 'paywall.subscribe' | translate }}
-        </ion-button>
-
-        <ion-button fill="clear" (click)="skip()">
-          {{ 'paywall.skip' | translate }}
-        </ion-button>
-
-        <ion-button fill="clear" size="small" (click)="restore()">
-          {{ 'paywall.restore' | translate }}
-        </ion-button>
-      </div>
-    </ion-content>
-  `,
+  templateUrl: './paywall.page.html',
+  styleUrls: ['./paywall.page.scss'],
 })
 export class PaywallPage {
   selectedPlan = 'weekly';
@@ -1766,6 +1818,28 @@ async function restore() {
 
 ### Tab Navigation (Angular)
 
+```html
+<!-- tabs/tabs.page.html -->
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>{{ 'tabs.home' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="explore">
+      <ion-icon name="compass"></ion-icon>
+      <ion-label>{{ 'tabs.explore' | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="settings">
+      <ion-icon name="settings"></ion-icon>
+      <ion-label>{{ 'tabs.settings' | translate }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+```
+
 ```typescript
 // tabs/tabs.page.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -1779,26 +1853,8 @@ import { AdsService } from '../services/ads.service';
   selector: 'app-tabs',
   standalone: true,
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, TranslateModule],
-  template: `
-    <ion-tabs>
-      <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="home">
-          <ion-icon name="home"></ion-icon>
-          <ion-label>{{ 'tabs.home' | translate }}</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button tab="explore">
-          <ion-icon name="compass"></ion-icon>
-          <ion-label>{{ 'tabs.explore' | translate }}</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button tab="settings">
-          <ion-icon name="settings"></ion-icon>
-          <ion-label>{{ 'tabs.settings' | translate }}</ion-label>
-        </ion-tab-button>
-      </ion-tab-bar>
-    </ion-tabs>
-  `,
+  templateUrl: './tabs.page.html',
+  styleUrls: ['./tabs.page.scss'],
 })
 export class TabsPage implements OnInit, OnDestroy {
   constructor(private adsService: AdsService) {
@@ -1837,6 +1893,58 @@ Settings page MUST include:
 
 ### Settings Page (Angular)
 
+```html
+<!-- settings/settings.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'settings.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-icon name="language" slot="start"></ion-icon>
+      <ion-label>{{ 'settings.language' | translate }}</ion-label>
+      <ion-select [value]="currentLang" (ionChange)="changeLanguage($event)">
+        <ion-select-option value="en">English</ion-select-option>
+        <ion-select-option value="tr">Türkçe</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="color-palette" slot="start"></ion-icon>
+      <ion-label>{{ 'settings.theme' | translate }}</ion-label>
+      <ion-select [value]="currentTheme" (ionChange)="changeTheme($event)">
+        <ion-select-option value="system">{{ 'settings.system' | translate }}</ion-select-option>
+        <ion-select-option value="light">{{ 'settings.light' | translate }}</ion-select-option>
+        <ion-select-option value="dark">{{ 'settings.dark' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="notifications" slot="start"></ion-icon>
+      <ion-label>{{ 'settings.notifications' | translate }}</ion-label>
+      <ion-toggle [checked]="notificationsEnabled" (ionChange)="toggleNotifications($event)"></ion-toggle>
+    </ion-item>
+
+    <ion-item *ngIf="!isPremium" button (click)="removeAds()">
+      <ion-icon name="star" slot="start"></ion-icon>
+      <ion-label>{{ 'settings.removeAds' | translate }}</ion-label>
+    </ion-item>
+
+    <ion-item button (click)="resetOnboarding()">
+      <ion-icon name="refresh" slot="start"></ion-icon>
+      <ion-label>{{ 'settings.resetOnboarding' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+```
+
+```scss
+// settings/settings.page.scss
+// Add your settings page styles here
+```
+
 ```typescript
 // settings/settings.page.ts
 import { Component, OnInit } from '@angular/core';
@@ -1860,51 +1968,8 @@ import { PurchasesService } from '../services/purchases.service';
     IonList, IonItem, IonLabel, IonIcon, IonToggle, IonSelect, IonSelectOption,
     NgIf, TranslateModule,
   ],
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ 'settings.title' | translate }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <ion-list>
-        <ion-item>
-          <ion-icon name="language" slot="start"></ion-icon>
-          <ion-label>{{ 'settings.language' | translate }}</ion-label>
-          <ion-select [value]="currentLang" (ionChange)="changeLanguage($event)">
-            <ion-select-option value="en">English</ion-select-option>
-            <ion-select-option value="tr">Türkçe</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon name="color-palette" slot="start"></ion-icon>
-          <ion-label>{{ 'settings.theme' | translate }}</ion-label>
-          <ion-select [value]="currentTheme" (ionChange)="changeTheme($event)">
-            <ion-select-option value="system">{{ 'settings.system' | translate }}</ion-select-option>
-            <ion-select-option value="light">{{ 'settings.light' | translate }}</ion-select-option>
-            <ion-select-option value="dark">{{ 'settings.dark' | translate }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon name="notifications" slot="start"></ion-icon>
-          <ion-label>{{ 'settings.notifications' | translate }}</ion-label>
-          <ion-toggle [checked]="notificationsEnabled" (ionChange)="toggleNotifications($event)"></ion-toggle>
-        </ion-item>
-
-        <ion-item *ngIf="!isPremium" button (click)="removeAds()">
-          <ion-icon name="star" slot="start"></ion-icon>
-          <ion-label>{{ 'settings.removeAds' | translate }}</ion-label>
-        </ion-item>
-
-        <ion-item button (click)="resetOnboarding()">
-          <ion-icon name="refresh" slot="start"></ion-icon>
-          <ion-label>{{ 'settings.resetOnboarding' | translate }}</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  `,
+  templateUrl: './settings.page.html',
+  styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
   currentLang = 'en';
@@ -2264,7 +2329,7 @@ Example:
 
 i18n is configured in `app.config.ts` using `@ngx-translate/core`. See the App Configuration (Angular) section.
 
-Usage in templates:
+Usage in `.html` template files:
 
 ```html
 {{ 'settings.title' | translate }}
@@ -2320,17 +2385,11 @@ const { t } = useI18n();
 
 ### Angular Best Practices
 
-ALWAYS use standalone components with proper imports:
+ALWAYS use standalone components with separate HTML, TS, and SCSS files:
 
-❌ WRONG:
+❌ WRONG (NgModules + IonicModule):
 
 ```typescript
-@Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-})
-export class HomePage {}
-
 // home.module.ts
 @NgModule({
   imports: [CommonModule, IonicModule],
@@ -2339,7 +2398,7 @@ export class HomePage {}
 export class HomePageModule {}
 ```
 
-✅ CORRECT:
+❌ WRONG (inline templates):
 
 ```typescript
 @Component({
@@ -2360,7 +2419,39 @@ export class HomePageModule {}
 export class HomePage {}
 ```
 
+✅ CORRECT (separate .html, .ts, .scss files):
+
+```html
+<!-- home/home.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'home.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <!-- content -->
+</ion-content>
+```
+
+```scss
+// home/home.page.scss
+// Page-specific styles here
+```
+
+```typescript
+// home/home.page.ts
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, TranslateModule],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
+})
+export class HomePage {}
+```
+
 Import individual Ionic components (e.g., `IonContent`, `IonButton`) - NEVER import `IonicModule` in standalone components.
+ALWAYS use `templateUrl` + `styleUrls` - NEVER use inline `template` or `styles`.
 
 ### React Best Practices
 
@@ -2550,6 +2641,8 @@ npx cap run android  # Build and run on Android
 ### Angular-Specific
 
 - Use standalone components (NEVER NgModules for pages/components)
+- ALWAYS use separate `.html`, `.ts`, `.scss` files - NEVER inline `template` or `styles`
+- Use `templateUrl` and `styleUrls` in `@Component` decorator
 - Use Angular's `inject()` function or constructor injection
 - Lazy-load via `loadComponent` in routes
 - Use Angular Signals for reactive state when possible
