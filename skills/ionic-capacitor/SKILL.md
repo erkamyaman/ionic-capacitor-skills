@@ -102,7 +102,7 @@ npm install @capacitor/preferences @capacitor/push-notifications @capacitor/spla
 | Concern | Angular | React | Vue |
 |---------|---------|-------|-----|
 | Framework | Ionic 8 + Angular 19 | Ionic 8 + React 19 | Ionic 8 + Vue 3.5 |
-| Native Runtime | Capacitor 6 | Capacitor 6 | Capacitor 6 |
+| Native Runtime | Capacitor 7 | Capacitor 7 | Capacitor 7 |
 | Navigation | Angular Router (lazy-loaded) | @ionic/react-router | @ionic/vue-router |
 | Tab Navigation | ion-tabs + ion-tab-bar | ion-tabs + ion-tab-bar | ion-tabs + ion-tab-bar |
 | State Management | Angular Services (Signals/RxJS) | Custom Hooks / Context | Composables / Pinia |

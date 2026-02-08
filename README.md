@@ -23,7 +23,7 @@ A comprehensive skill that guides AI agents to build complete Ionic Capacitor ap
 | Feature | Implementation |
 |---------|---------------|
 | **Framework** | Ionic 8 + Angular 19 / React 19 / Vue 3.5 |
-| **Native Runtime** | Capacitor 6 |
+| **Native Runtime** | Capacitor 7 |
 | **Onboarding** | Swipe screens with fullscreen video background + gradient overlay |
 | **Paywall** | RevenueCat with weekly/yearly subscriptions + 50% OFF badge |
 | **Ads** | AdMob banner ads via @capacitor-community/admob |
