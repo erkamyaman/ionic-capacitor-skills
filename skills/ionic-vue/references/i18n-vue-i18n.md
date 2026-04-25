@@ -39,16 +39,19 @@ await Preferences.set({ key: 'language', value: 'tr' });
 
 ## Honoring a saved preference at startup
 
-The `main.ts` setup detects browser language. To restore a saved choice, hydrate the locale before mounting:
+The `main.ts` setup detects browser language. To restore a saved choice, hydrate the locale before mounting. The snippet below assumes `i18n` is exported from `main.ts` — change `const i18n = createI18n(...)` to `export const i18n = createI18n(...)` in [app-config.md](app-config.md):
 
 ```typescript
+import { Preferences } from '@capacitor/preferences';
+import { i18n } from './main';
+
 const { value: saved } = await Preferences.get({ key: 'language' });
 if (saved && ['en', 'tr'].includes(saved)) {
-  i18n.global.locale.value = saved;
+  i18n.global.locale.value = saved as 'en' | 'tr';
 }
 ```
 
-Place the hydration before `app.mount('#app')`.
+Place the hydration before `app.mount('#app')` — the cleanest spot is to wrap the existing `router.isReady().then(...)` block.
 
 ## Global vs scoped i18n
 

@@ -35,10 +35,9 @@ import { IonPage, IonContent, IonButton } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import { useOnboarding } from '../composables/useOnboarding';
 
-const VIDEO_URL =
+const videoUrl =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
-const videoUrl = VIDEO_URL;
 const router = useRouter();
 const { setCompleted } = useOnboarding();
 

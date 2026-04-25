@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/PaywallPage.vue'),
   },
   {
-    path: '/tabs/',
+    path: '/tabs',
     component: TabsLayout,
     children: [
       { path: '', redirect: '/tabs/home' },
@@ -29,7 +29,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'settings', component: () => import('../views/SettingsPage.vue') },
     ],
   },
-  { path: '/', redirect: '/tabs/' },
+  { path: '/', redirect: '/tabs' },
 ];
 
 const router = createRouter({
@@ -54,7 +54,7 @@ export default router;
 
 - All views except `TabsLayout` are dynamic-imported for code-splitting.
 - The onboarding guard is a single `beforeEach` hook (Vue's idiomatic pattern). See [onboarding-guard.md](onboarding-guard.md).
-- The default route `'/'` redirects to `/tabs/`; the guard then redirects to `/onboarding` if needed.
+- The default route `'/'` redirects to `/tabs`; the guard then redirects to `/onboarding` if needed.
 
 ## Navigation API
 

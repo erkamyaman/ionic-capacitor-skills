@@ -22,7 +22,7 @@ Project setup:
 
 Pages and navigation:
 
-- **Onboarding guard** (`CanActivateFn`): [onboarding-guard.md](references/onboarding-guard.md)
+- **Onboarding guard** (`CanMatchFn` — preferred over `CanActivateFn` for lazy-route gates): [onboarding-guard.md](references/onboarding-guard.md)
 - **Onboarding page** (video background + Swiper): [onboarding-page.md](references/onboarding-page.md)
 - **Paywall page** (RevenueCat): [paywall-page.md](references/paywall-page.md)
 - **Tabs navigation**: [tabs-navigation.md](references/tabs-navigation.md)
@@ -30,10 +30,13 @@ Pages and navigation:
 
 Cross-cutting:
 
-- **Signals** (`signal`, `computed`, `linkedSignal`, `resource`, signal inputs/outputs): [signals.md](references/signals.md)
+- **Signals** (`signal`, `computed`, `effect`, `untracked`, signal inputs/outputs): [signals.md](references/signals.md)
 - **Services** (Theme / Onboarding / Ads / Purchases / Notifications): [services.md](references/services.md)
+- **Built-in control flow** (`@if` / `@for` / `@switch`): [control-flow.md](references/control-flow.md)
+- **Accessibility** (ARIA, touch targets, screen readers): [accessibility.md](references/accessibility.md)
+- **`@defer` lazy rendering** (paywall / onboarding heavy chunks): [defer-loading.md](references/defer-loading.md)
 - **i18n with `@ngx-translate/core`**: [i18n-ngx-translate.md](references/i18n-ngx-translate.md)
-- **Best practices** (standalone, separate files, signals-first): [best-practices.md](references/best-practices.md)
+- **Best practices** (standalone, separate files, signals-first, `OnPush`, `inject()`): [best-practices.md](references/best-practices.md)
 - **Commands** (build / sync / open): [commands.md](references/commands.md)
 
 Native plugin topics live in `../ionic-shared/references/` — always link there for AdMob, RevenueCat, push notifications, storage, and theme:
@@ -73,7 +76,7 @@ npm install \
 - ❌ Inline `template` or `styles` in `@Component` — always use **separate** `.html`, `.ts`, `.scss` files via `templateUrl` and `styleUrls`.
 - ❌ `@angular/http` (deprecated) — use `@angular/common/http`.
 - ❌ `any` type — use real TypeScript types.
-- ✅ **Prefer Signals** for reactive state (`signal()`, `computed()`, `linkedSignal()`, `resource()`). Services should expose readonly signals where it makes sense — see [signals.md](references/signals.md).
+- ✅ **Prefer Signals** for reactive state — `signal()`, `computed()`, `effect()`. Services should expose readonly signals where it makes sense — see [signals.md](references/signals.md). Stick to **stable** signal APIs; avoid Angular features marked "developer preview" / "experimental" (e.g. `linkedSignal`, `resource`, Signal Forms) until they graduate.
 - ✅ Use **signal inputs / outputs** (`input()`, `input.required()`, `output()`) for new components.
 
 ## Before reporting done

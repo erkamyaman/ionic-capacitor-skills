@@ -10,16 +10,54 @@ npx skills add erkamyaman/ionic-skills
 
 ## Available Skills
 
+### Core (framework scaffolds + shared concerns)
+
 | Skill | Description |
 |-------|-------------|
 | [ionic-angular](./skills/ionic-angular) | Ionic + Angular standalone components, lazy routes, Signals, services, `@ngx-translate/core` |
 | [ionic-react](./skills/ionic-react)     | Ionic + React functional components, hooks, `@ionic/react-router`, `react-i18next` |
 | [ionic-vue](./skills/ionic-vue)         | Ionic + Vue 3 Composition API, composables, `@ionic/vue-router`, `vue-i18n` |
-| [ionic-shared](./skills/ionic-shared)   | Framework-agnostic Capacitor concerns — AdMob, RevenueCat, push, storage, theme, localization, store-submission notes. Referenced by all three framework skills |
+| [ionic-shared](./skills/ionic-shared)   | Framework-agnostic Capacitor concerns — AdMob, RevenueCat, push, storage, theme, localization, env vars, store-submission notes. Referenced by all three framework skills |
+
+### Compliance (required for ad/IAP apps)
+
+| Skill | Description |
+|-------|-------------|
+| [ionic-cmp-consent](./skills/ionic-cmp-consent) | Google UMP consent dialog — required in EU/UK before AdMob serves personalized ads |
+| [ionic-att](./skills/ionic-att)                 | iOS App Tracking Transparency — required for personalized ads on iOS 14+; App Review rejects without it |
+
+### Release essentials
+
+| Skill | Description |
+|-------|-------------|
+| [ionic-app-icon-splash](./skills/ionic-app-icon-splash) | `@capacitor/assets` — generate every iOS/Android icon + splash size from one source PNG |
+| [ionic-deep-links](./skills/ionic-deep-links)           | Custom URL schemes + iOS Universal Links + Android App Links |
+| [ionic-apple-sign-in](./skills/ionic-apple-sign-in)     | Sign in with Apple — required by Apple if you offer any other social login on iOS |
+
+### Native plugins
+
+| Skill | Description |
+|-------|-------------|
+| [ionic-native-essentials](./skills/ionic-native-essentials) | Camera, Filesystem, Share, Haptics, Network, Keyboard — six small Capacitor plugins bundled |
+| [ionic-biometric-auth](./skills/ionic-biometric-auth)       | Face ID / Touch ID / fingerprint via `@aparajita/capacitor-biometric-auth` |
+| [ionic-local-notifications](./skills/ionic-local-notifications) | Device-scheduled reminders via `@capacitor/local-notifications` (distinct from push) |
+
+### Backend / auth
+
+| Skill | Description |
+|-------|-------------|
+| [ionic-firebase](./skills/ionic-firebase)   | Firebase Auth + Firestore + native social sign-in |
+| [ionic-supabase](./skills/ionic-supabase)   | Supabase Auth + Postgres + RLS + realtime |
+
+### Operations
+
+| Skill | Description |
+|-------|-------------|
+| [ionic-sentry](./skills/ionic-sentry)             | Crash + error reporting via `@sentry/capacitor` + framework SDK |
+| [ionic-analytics](./skills/ionic-analytics)       | Product analytics — Firebase Analytics or PostHog, with event taxonomy |
+| [ionic-in-app-review](./skills/ionic-in-app-review) | Native App Store / Play Store rating prompt |
 
 ## Layout
-
-Each skill follows the [`angular/angular` dev-skills](https://github.com/angular/angular/tree/main/skills/dev-skills) pattern:
 
 ```
 skills/<skill-name>/
@@ -29,7 +67,7 @@ skills/<skill-name>/
     └── ...
 ```
 
-`SKILL.md` is a router. The agent loads only the references/ files it needs for the task at hand.
+`SKILL.md` is a short router with frontmatter. The agent loads only the references/ files it needs for the task at hand.
 
 ## What's Included
 
@@ -45,8 +83,8 @@ skills/<skill-name>/
 | **Navigation**        | `ion-tabs` + framework-specific router |
 | **Storage**           | `@capacitor/preferences` |
 | **Notifications**     | `@capacitor/push-notifications` |
-| **Onboarding guard**  | `CanActivateFn` (Angular), wrapper component (React), `beforeEach` (Vue) |
-| **State**             | Angular services + Signals / React hooks / Vue composables |
+| **Onboarding guard**  | `CanMatchFn` (Angular), wrapper component (React), `beforeEach` (Vue) |
+| **State**             | Angular services exposing readonly Signals (`OnPush`-friendly) / React hooks / Vue composables |
 
 ### App flow
 
@@ -66,7 +104,7 @@ Onboarding (video bg) → Paywall (subscriptions) → Main App (tabs)
 A **shared utilities + framework wrappers** pattern keeps Capacitor logic in one place:
 
 - **`utils/`** — framework-agnostic TypeScript functions calling Capacitor plugins (AdMob, RevenueCat, Preferences, etc.). Defined once in `ionic-shared`, copied identically into each framework's project.
-- **Angular** — `services/` wrap the utilities with `@Injectable({ providedIn: 'root' })`. Premium status, theme, language exposed as **Signals** so templates re-render reactively.
+- **Angular** — `services/` wrap the utilities with `@Injectable({ providedIn: 'root' })` and expose state as readonly **Signals** (signal-store pattern). Pages use `ChangeDetectionStrategy.OnPush`, modern built-in control flow (`@if` / `@for`), and `inject()` for DI. Skill avoids any APIs marked "developer preview" / "experimental" (no `linkedSignal`, `resource`, or Signal Forms until they graduate).
 - **React** — `hooks/` wrap the utilities with `useCallback`.
 - **Vue** — `composables/` wrap the utilities as functions returning state + actions.
 

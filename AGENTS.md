@@ -21,31 +21,60 @@ ionic-skills/
 ├── package.json              # skills registry (skills array)
 └── skills/
     ├── README.md             # skills index
-    ├── ionic-shared/         # framework-agnostic Capacitor concerns
+    │
+    ├── ionic-shared/         # framework-agnostic Capacitor concerns (referenced by all 3 frameworks)
     │   ├── SKILL.md
-    │   └── references/
-    │       ├── capacitor-config.md
-    │       ├── storage.md
-    │       ├── theming.md
-    │       ├── admob.md
-    │       ├── revenuecat.md
-    │       ├── push-notifications.md
-    │       ├── localization-content.md
-    │       ├── app-store-notes.md
-    │       └── testing-checklist.md
-    ├── ionic-angular/
+    │   └── references/       # capacitor-config, environments-and-keys, storage, theming,
+    │                         # admob, revenuecat, push-notifications, localization-content,
+    │                         # app-store-notes, testing-checklist
+    │
+    ├── ionic-angular/        # Ionic + Angular: standalone components, Signals, services
     │   ├── SKILL.md
     │   └── references/       # new-app, project-structure, app-config, routing, services,
-    │                         # signals, onboarding-guard, onboarding-page, paywall-page,
+    │                         # signals, control-flow, accessibility, defer-loading,
+    │                         # onboarding-guard, onboarding-page, paywall-page,
     │                         # tabs-navigation, settings-page, i18n-ngx-translate,
     │                         # best-practices, commands
-    ├── ionic-react/
+    │
+    ├── ionic-react/          # Ionic + React: functional components, hooks, react-i18next
     │   ├── SKILL.md
-    │   └── references/       # same topics, hooks/ instead of services/, react-i18next
-    └── ionic-vue/
-        ├── SKILL.md
-        └── references/       # same topics, composables/ instead of services/, vue-i18n
+    │   └── references/       # new-app, project-structure, app-config, routing, hooks,
+    │                         # onboarding-guard, onboarding-page, paywall-page,
+    │                         # tabs-navigation, settings-page, i18n-react-i18next,
+    │                         # best-practices, commands
+    │
+    ├── ionic-vue/            # Ionic + Vue 3 Composition API, composables, vue-i18n
+    │   ├── SKILL.md
+    │   └── references/       # new-app, project-structure, app-config, routing, composables,
+    │                         # onboarding-guard, onboarding-page, paywall-page,
+    │                         # tabs-navigation, settings-page, i18n-vue-i18n,
+    │                         # best-practices, commands
+    │
+    │   # Compliance (required for ad/IAP apps)
+    ├── ionic-cmp-consent/    # Google UMP — GDPR consent before AdMob
+    ├── ionic-att/            # iOS App Tracking Transparency
+    │
+    │   # Release essentials
+    ├── ionic-app-icon-splash/   # @capacitor/assets — generate icons + splash
+    ├── ionic-deep-links/        # custom schemes + Universal Links + App Links
+    ├── ionic-apple-sign-in/     # Sign in with Apple (use only outside Firebase)
+    │
+    │   # Native plugins
+    ├── ionic-native-essentials/ # Camera/Filesystem/Share/Haptics/Network/Keyboard
+    ├── ionic-biometric-auth/    # Face ID / Touch ID / fingerprint
+    ├── ionic-local-notifications/  # device-scheduled reminders
+    │
+    │   # Backend / auth
+    ├── ionic-firebase/       # Firebase Auth + Firestore + native social sign-in
+    ├── ionic-supabase/       # Supabase Auth + Postgres + RLS + realtime
+    │
+    │   # Operations
+    ├── ionic-sentry/         # crash + error reporting
+    ├── ionic-analytics/      # Firebase Analytics or PostHog
+    └── ionic-in-app-review/  # native rating prompt
 ```
+
+Every skill follows the same layout: `<skill>/SKILL.md` (router + frontmatter) plus `<skill>/references/*.md` (one focused topic per file). The single-file skills (`ionic-in-app-review`, parts of `ionic-biometric-auth`) collapse references into the SKILL.md when there's only one topic.
 
 ## How skills work
 
@@ -54,8 +83,6 @@ ionic-skills/
 - `references/*.md` files cover one focused topic each so the agent loads only what's relevant.
 - Cross-framework topics live in `ionic-shared/references/` and are linked from each framework skill's `SKILL.md`.
 - `package.json`'s `skills` array enumerates the available skills.
-
-This layout follows [`angular/angular`'s dev-skills](https://github.com/angular/angular/tree/main/skills/dev-skills).
 
 ## Adding a new skill
 
@@ -140,7 +167,7 @@ Every PR must include:
 - Standalone components only — no NgModules for new pages.
 - Separate `.html` / `.ts` / `.scss` files via `templateUrl` + `styleUrls` — never inline `template`/`styles`.
 - Import individual Ionic components (`IonButton`, `IonContent`) — never `IonicModule`.
-- **Prefer Signals** for reactive state (`signal()`, `computed()`, `linkedSignal()`, `resource()`). Services should expose state as readonly signals where it makes sense.
+- **Prefer Signals** for reactive state — `signal()`, `computed()`, `effect()`. Services should expose state as readonly signals. Stick to **stable** signal APIs; avoid Angular features marked "developer preview" / "experimental" (e.g. `linkedSignal`, `resource`, Signal Forms) until they graduate.
 
 ### React-specific
 

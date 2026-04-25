@@ -29,6 +29,19 @@
     "ionic-shared",
     "ionic-angular",
     "ionic-react",
-    "ionic-vue"
+    "ionic-vue",
+    "ionic-cmp-consent",
+    "ionic-att",
+    "ionic-app-icon-splash",
+    "ionic-deep-links",
+    "ionic-apple-sign-in",
+    "ionic-native-essentials",
+    "ionic-biometric-auth",
+    "ionic-local-notifications",
+    "ionic-firebase",
+    "ionic-supabase",
+    "ionic-sentry",
+    "ionic-analytics",
+    "ionic-in-app-review"
   ]
 }

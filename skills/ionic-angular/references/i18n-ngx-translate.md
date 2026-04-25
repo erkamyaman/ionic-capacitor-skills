@@ -14,34 +14,53 @@ For attributes:
 <ion-input [placeholder]="'paywall.title' | translate"></ion-input>
 ```
 
+## Why ngx-translate vs `@angular/localize`
+
+This skill uses [`@ngx-translate/core`](https://github.com/ngx-translate/core) — runtime translation loaded as JSON. Angular ships its own [`@angular/localize`](https://angular.dev/guide/i18n) for build-time message extraction with per-locale bundles. The trade-off:
+
+| | `@ngx-translate/core` | `@angular/localize` |
+|---|---|---|
+| Switching locale at runtime | ✅ free | ❌ requires reloading per-locale bundle |
+| Bundle shape | one bundle + JSON fetched per locale | one bundle per locale (build N times) |
+| Maintainer | community | Angular team |
+| ICU messages / pluralization | basic | first-class |
+| Best for | small-locale apps that switch frequently | larger / static-locale apps, vendor-translated XLIFF |
+
+We chose ngx-translate for runtime convenience (mobile users sometimes switch language without reinstalling). For an app that ships to broad markets with vendor-translated content, prefer `@angular/localize`.
+
 ## Detect browser language at startup
 
-```typescript
-// app.component.ts
-import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+Language is owned by `LanguageService` ([services.md](services.md)). The service runs in the `APP_INITIALIZER` ([app-config.md](app-config.md)) so it's set before any guard / page renders, and it `await firstValueFrom(translate.use(lang))` so the JSON is loaded before first paint — without that wait, the first paint shows raw translation keys (`paywall.title`) until the HTTP fetch resolves.
 
-@Component({ /* ... */ })
-export class AppComponent implements OnInit {
-  constructor(private translate: TranslateService) {}
+The bootstrap path:
 
-  ngOnInit() {
-    const browserLang = navigator.language.split('-')[0];
-    this.translate.setDefaultLang('en');
-    this.translate.use(['en', 'tr'].includes(browserLang) ? browserLang : 'en');
-  }
-}
 ```
+APP_INITIALIZER
+  ↓
+language.initialize()        ← reads Preferences → browser → 'en'; awaits JSON load
+  ↓
+theme + onboarding init      ← Promise.all
+  ↓
+purchases.initialize()       ← then ads
+```
+
+Pages call `inject(LanguageService).setLang('tr')` to change at runtime — the service handles persistence and the JSON-load wait.
 
 ## Usage in TypeScript
 
 ```typescript
+import { Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-constructor(private translate: TranslateService) {}
+@Component({ /* ... */ })
+export class SomePage {
+  private translate = inject(TranslateService);
 
-const text = this.translate.instant('paywall.subscribe');
-this.translate.get('paywall.subscribe').subscribe(text => /* ... */);
+  showSubscribeText() {
+    const text = this.translate.instant('paywall.subscribe');
+    this.translate.get('paywall.subscribe').subscribe(text => /* ... */);
+  }
+}
 ```
 
 `instant()` is synchronous and returns the string immediately if translations are loaded; `get()` is async (returns an Observable) and is the right call when translations might not yet be ready.

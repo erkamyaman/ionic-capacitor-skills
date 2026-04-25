@@ -65,6 +65,10 @@ export default TabsLayout;
 - The `OnboardingGuard` component wraps `<TabsLayout />` in `App.tsx` to redirect when onboarding hasn't been completed — see [onboarding-guard.md](onboarding-guard.md).
 - Banner ad lifecycle is managed inside `TabsLayout`'s `useEffect` so the ad shows for non-premium users while in tabs and hides when leaving.
 
+## Why the nested `/tabs/home` routes
+
+`App.tsx` mounts `<Route path="/tabs">` (no `exact`) to give the tabs subtree, then `<TabsLayout>` renders its own `<IonRouterOutlet>` containing the per-tab `<Route exact path="/tabs/home" ...>`. This double-nesting is the standard `@ionic/react-router` shape — the outer outlet handles tab→non-tab transitions, the inner outlet handles tab-to-tab. It looks odd at first but it's what enables the native-feeling stacked navigation.
+
 ## Navigation API
 
 ```tsx

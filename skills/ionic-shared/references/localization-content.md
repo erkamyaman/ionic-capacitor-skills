@@ -30,7 +30,13 @@ The keys here cover every string used by the onboarding, paywall, tabs, and sett
     "yearly": "Yearly",
     "subscribe": "Subscribe",
     "skip": "Continue with ads",
-    "restore": "Restore Purchases"
+    "restore": "Restore Purchases",
+    "loadError": "Couldn't load subscription options.",
+    "retry": "Retry",
+    "noOfferings": "No subscriptions are available right now.",
+    "purchaseError": "Purchase failed. Please try again.",
+    "restoreEmpty": "No previous purchases found.",
+    "restoreError": "Couldn't restore purchases. Please try again."
   },
   "settings": {
     "title": "Settings",
@@ -66,7 +72,13 @@ The keys here cover every string used by the onboarding, paywall, tabs, and sett
     "yearly": "Yıllık",
     "subscribe": "Abone Ol",
     "skip": "Reklamlı devam et",
-    "restore": "Satın Alımları Geri Yükle"
+    "restore": "Satın Alımları Geri Yükle",
+    "loadError": "Abonelik seçenekleri yüklenemedi.",
+    "retry": "Tekrar dene",
+    "noOfferings": "Şu anda kullanılabilir abonelik yok.",
+    "purchaseError": "Satın alma başarısız oldu. Lütfen tekrar deneyin.",
+    "restoreEmpty": "Önceki satın alma bulunamadı.",
+    "restoreError": "Satın alımlar geri yüklenemedi. Lütfen tekrar deneyin."
   },
   "settings": {
     "title": "Ayarlar",

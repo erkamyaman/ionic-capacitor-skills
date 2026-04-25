@@ -10,21 +10,29 @@ Fullscreen page with an HTML5 `<video>` background, gradient overlay, and Swiper
 ## `onboarding/onboarding.page.html`
 
 ```html
-<ion-content [fullscreen]="true" class="onboarding-content">
-  <video
-    [src]="videoUrl"
-    autoplay
-    loop
-    muted
-    playsinline
-    class="background-video"
-  ></video>
-  <div class="gradient-overlay"></div>
-  <div class="onboarding-slides">
-    <!-- Swiper slides go here -->
-  </div>
-</ion-content>
+<ion-page>
+  <ion-content [fullscreen]="true" class="onboarding-content">
+    <video
+      [src]="videoUrl"
+      autoplay
+      loop
+      muted
+      playsinline
+      aria-hidden="true"
+      class="background-video"
+    ></video>
+    <div class="gradient-overlay" aria-hidden="true"></div>
+    <div class="onboarding-slides">
+      <!-- Swiper slides go here. See defer-loading.md for an @defer pattern. -->
+      <ion-button (click)="completeOnboarding()">
+        {{ 'onboarding.start' | translate }}
+      </ion-button>
+    </div>
+  </ion-content>
+</ion-page>
 ```
+
+The `<video>` and gradient are decorative — `aria-hidden="true"` keeps screen readers focused on the actual slide content. See [accessibility.md](accessibility.md). For lazy-loading the heavy Swiper-based slides, see [defer-loading.md](defer-loading.md).
 
 ## `onboarding/onboarding.page.scss`
 
@@ -59,8 +67,8 @@ Fullscreen page with an HTML5 `<video>` background, gradient overlay, and Swiper
 ## `onboarding/onboarding.page.ts`
 
 ```typescript
-import { Component } from '@angular/core';
-import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { IonContent, IonPage, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { OnboardingService } from '../services/onboarding.service';
 
@@ -70,20 +78,19 @@ const VIDEO_URL =
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [IonContent, IonButton, IonIcon],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonContent, IonPage, IonButton, IonIcon],
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
 })
 export class OnboardingPage {
+  private router = inject(Router);
+  private onboarding = inject(OnboardingService);
+
   videoUrl = VIDEO_URL;
 
-  constructor(
-    private router: Router,
-    private onboardingService: OnboardingService,
-  ) {}
-
   async completeOnboarding() {
-    await this.onboardingService.setCompleted(true);
+    await this.onboarding.setCompleted(true);
     this.router.navigateByUrl('/paywall', { replaceUrl: true });
   }
 }

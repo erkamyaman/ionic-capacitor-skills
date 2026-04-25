@@ -11,7 +11,7 @@ Required entries:
 ## `pages/SettingsPage.tsx`
 
 ```tsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonPage,
   IonList, IonItem, IonLabel, IonIcon, IonToggle,
@@ -25,25 +25,20 @@ import { Preferences } from '@capacitor/preferences';
 import { useTheme } from '../hooks/useTheme';
 import { useOnboarding } from '../hooks/useOnboarding';
 import { usePurchases } from '../hooks/usePurchases';
+import { useNotifications } from '../hooks/useNotifications';
 import { ThemeMode } from '../utils/theme';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const router = useIonRouter();
-  const { getTheme, setTheme } = useTheme();
+  // Hooks return reactive values (signal-store pattern) — no useEffect/setState needed
+  // for premium/theme state.
+  const { mode: currentTheme, setMode: setTheme } = useTheme();
   const { reset } = useOnboarding();
   const { isPremium } = usePurchases();
+  const { permissionGranted, requestPermission } = useNotifications();
 
-  const [currentLang, setCurrentLang] = useState('en');
-  const [currentTheme, setCurrentTheme] = useState<ThemeMode>('system');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [premium, setPremium] = useState(false);
-
-  useEffect(() => {
-    setCurrentLang(i18n.language || 'en');
-    getTheme().then(setCurrentTheme);
-    isPremium().then(setPremium);
-  }, []);
+  const [currentLang, setCurrentLang] = useState(i18n.language || 'en');
 
   const changeLanguage = (lang: string) => {
     setCurrentLang(lang);
@@ -52,8 +47,17 @@ const SettingsPage: React.FC = () => {
   };
 
   const changeTheme = (mode: ThemeMode) => {
-    setCurrentTheme(mode);
     setTheme(mode);
+  };
+
+  const toggleNotifications = async (enabled: boolean) => {
+    if (enabled) {
+      // Request OS permission only when the user opts in. If denied, the
+      // hook's permissionGranted store stays false, reverting the toggle.
+      await requestPermission();
+    }
+    // When toggled off, the OS permission isn't actually revoked (only
+    // possible via Settings) — the app just stops calling push APIs.
   };
 
   const resetOnboarding = async () => {
@@ -99,12 +103,12 @@ const SettingsPage: React.FC = () => {
             <IonIcon icon={notifications} slot="start" />
             <IonLabel>{t('settings.notifications')}</IonLabel>
             <IonToggle
-              checked={notificationsEnabled}
-              onIonChange={(e) => setNotificationsEnabled(e.detail.checked)}
+              checked={permissionGranted}
+              onIonChange={(e) => toggleNotifications(e.detail.checked)}
             />
           </IonItem>
 
-          {!premium && (
+          {!isPremium && (
             <IonItem button onClick={() => router.push('/paywall')}>
               <IonIcon icon={star} slot="start" />
               <IonLabel>{t('settings.removeAds')}</IonLabel>

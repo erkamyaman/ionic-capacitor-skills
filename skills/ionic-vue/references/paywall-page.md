@@ -33,7 +33,7 @@ Shown immediately after onboarding. Two RevenueCat packages (weekly default, yea
           {{ t('paywall.skip') }}
         </ion-button>
 
-        <ion-button fill="clear" size="small" @click="restore">
+        <ion-button fill="clear" size="small" @click="handleRestore">
           {{ t('paywall.restore') }}
         </ion-button>
       </div>
@@ -50,9 +50,11 @@ import { usePurchases } from '../composables/usePurchases';
 
 const { t } = useI18n();
 const router = useRouter();
-const { restorePurchases } = usePurchases();
+const { restore } = usePurchases();
 const selectedPlan = ref('weekly');
 
+// Note: prices below are placeholders — production paywalls should render
+// from `pkg.product.priceString` so they're localized + currency-correct.
 const subscriptionOptions = [
   { id: 'weekly', title: 'paywall.weekly', price: '$4.99/week', badge: null },
   { id: 'yearly', title: 'paywall.yearly', price: '$129.99/year', badge: '50% OFF' },
@@ -68,8 +70,8 @@ function skip() {
   router.replace('/tabs');
 }
 
-async function restore() {
-  const restored = await restorePurchases();
+async function handleRestore() {
+  const restored = await restore();
   if (restored) {
     router.replace('/tabs');
   }

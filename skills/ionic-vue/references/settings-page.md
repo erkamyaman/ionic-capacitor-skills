@@ -21,7 +21,7 @@ Required entries:
     <ion-content>
       <ion-list>
         <ion-item>
-          <ion-icon name="language" slot="start" />
+          <ion-icon :icon="language" slot="start" aria-hidden="true" />
           <ion-label>{{ t('settings.language') }}</ion-label>
           <ion-select :value="currentLang" @ion-change="changeLanguage($event)">
             <ion-select-option value="en">English</ion-select-option>
@@ -30,7 +30,7 @@ Required entries:
         </ion-item>
 
         <ion-item>
-          <ion-icon name="color-palette" slot="start" />
+          <ion-icon :icon="colorPalette" slot="start" aria-hidden="true" />
           <ion-label>{{ t('settings.theme') }}</ion-label>
           <ion-select :value="currentTheme" @ion-change="changeTheme($event)">
             <ion-select-option value="system">{{ t('settings.system') }}</ion-select-option>
@@ -40,7 +40,7 @@ Required entries:
         </ion-item>
 
         <ion-item>
-          <ion-icon name="notifications" slot="start" />
+          <ion-icon :icon="notifications" slot="start" aria-hidden="true" />
           <ion-label>{{ t('settings.notifications') }}</ion-label>
           <ion-toggle
             :checked="notificationsEnabled"
@@ -49,12 +49,12 @@ Required entries:
         </ion-item>
 
         <ion-item v-if="!premium" button @click="removeAds">
-          <ion-icon name="star" slot="start" />
+          <ion-icon :icon="star" slot="start" aria-hidden="true" />
           <ion-label>{{ t('settings.removeAds') }}</ion-label>
         </ion-item>
 
         <ion-item button @click="resetOnboardingFlow">
-          <ion-icon name="refresh" slot="start" />
+          <ion-icon :icon="refresh" slot="start" aria-hidden="true" />
           <ion-label>{{ t('settings.resetOnboarding') }}</ion-label>
         </ion-item>
       </ion-list>
@@ -63,36 +63,33 @@ Required entries:
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonList, IonItem, IonLabel, IonIcon, IonToggle,
   IonSelect, IonSelectOption,
 } from '@ionic/vue';
+import {
+  language, colorPalette, notifications, star, refresh,
+} from 'ionicons/icons';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Preferences } from '@capacitor/preferences';
 import { useTheme } from '../composables/useTheme';
 import { useOnboarding } from '../composables/useOnboarding';
 import { usePurchases } from '../composables/usePurchases';
+import { useNotifications } from '../composables/useNotifications';
 import type { ThemeMode } from '../utils/theme';
 
 const { t, locale } = useI18n();
 const router = useRouter();
-const { getTheme, setTheme } = useTheme();
+// Composables expose reactive refs (signal-store pattern) — no onMounted/ref shadow needed.
+const { mode: currentTheme, setMode: setTheme } = useTheme();
 const { reset } = useOnboarding();
-const { isPremium } = usePurchases();
+const { isPremium: premium } = usePurchases();
+const { permissionGranted: notificationsEnabled, requestPermission } = useNotifications();
 
-const currentLang = ref('en');
-const currentTheme = ref<ThemeMode>('system');
-const notificationsEnabled = ref(false);
-const premium = ref(false);
-
-onMounted(async () => {
-  currentLang.value = locale.value || 'en';
-  currentTheme.value = await getTheme();
-  premium.value = await isPremium();
-});
+const currentLang = ref<string>(locale.value || 'en');
 
 function changeLanguage(event: CustomEvent) {
   const lang = event.detail.value;
@@ -103,13 +100,18 @@ function changeLanguage(event: CustomEvent) {
 
 function changeTheme(event: CustomEvent) {
   const mode = event.detail.value as ThemeMode;
-  currentTheme.value = mode;
   setTheme(mode);
 }
 
-function toggleNotifications(event: CustomEvent) {
-  notificationsEnabled.value = event.detail.checked;
-  // call useNotifications().requestPermission() here on enable
+async function toggleNotifications(event: CustomEvent) {
+  const enabled = event.detail.checked;
+  if (enabled) {
+    // Request OS permission only when the user opts in. If denied, the
+    // composable's permissionGranted ref stays false, reverting the toggle.
+    await requestPermission();
+  }
+  // When toggled off, the OS permission isn't actually revoked (only
+  // possible via Settings) — the app just stops calling push APIs.
 }
 
 function removeAds() {

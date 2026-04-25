@@ -1,5 +1,7 @@
 # Commands (Angular)
 
+> Use `npx ng <cmd>` as the canonical CLI. `ionic serve` / `ionic build` are wrappers from the Ionic CLI — they work fine but are an extra dependency. `ng serve` and `ng build` give you the same result and use the Angular CLI directly.
+
 ## After completing code (always run)
 
 ```bash
@@ -13,8 +15,8 @@ If the build fails, fix the errors before reporting the task as done. Do not ski
 ## Development
 
 ```bash
-ionic serve              # browser dev server
-ionic build              # production build
+npx ng serve             # browser dev server (or: ionic serve)
+npx ng build             # production build  (or: ionic build)
 npx cap sync             # sync to native after each build
 npx cap open ios         # open Xcode
 npx cap open android     # open Android Studio

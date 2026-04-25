@@ -7,6 +7,7 @@ project-root/
 │   ├── main.tsx
 │   ├── pages/
 │   │   ├── OnboardingPage.tsx
+│   │   ├── OnboardingPage.css       # background-video + gradient-overlay styles
 │   │   ├── PaywallPage.tsx
 │   │   ├── SettingsPage.tsx
 │   │   ├── HomePage.tsx

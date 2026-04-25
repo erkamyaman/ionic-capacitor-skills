@@ -41,6 +41,7 @@ Cross-framework guidance for Ionic Capacitor apps. The framework skills (`ionic-
 
 ```bash
 npm install \
+  @capacitor/app \
   @capacitor/preferences \
   @capacitor/push-notifications \
   @capacitor/splash-screen \
@@ -49,5 +50,7 @@ npm install \
   @capacitor-community/admob \
   swiper
 ```
+
+`@capacitor/app` is needed by `ionic-deep-links` (and any skill that listens to `appUrlOpen` / `appStateChange`), so it's part of the shared baseline.
 
 These are installed in addition to the framework-specific i18n library (see each framework's `SKILL.md`).

@@ -20,7 +20,7 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then(m => m.tabsRoutes),
-    canActivate: [onboardingGuard],
+    canMatch: [onboardingGuard],   // CanMatchFn — see onboarding-guard.md for why over canActivate
   },
   {
     path: '',

@@ -28,7 +28,9 @@ import './theme/variables.css';
 
 const browserLang = navigator.language.split('-')[0];
 
-const i18n = createI18n({
+// Exported so other modules (e.g., a saved-language hydration step) can read/write
+// the locale via `i18n.global.locale.value` — see i18n-vue-i18n.md.
+export const i18n = createI18n({
   legacy: false,
   locale: ['en', 'tr'].includes(browserLang) ? browserLang : 'en',
   fallbackLocale: 'en',
@@ -36,6 +38,9 @@ const i18n = createI18n({
 });
 
 const app = createApp(App);
+// `mode: 'md'` forces Material Design styling on iOS too — gives a consistent
+// look across both platforms. Drop the option (or set per-platform) to let
+// Ionic auto-detect (iOS users see iOS-native, Android users see Material).
 app.use(IonicVue, { mode: 'md' });
 app.use(router);
 app.use(i18n);
@@ -49,19 +54,47 @@ router.isReady().then(() => app.mount('#app'));
 ```vue
 <template>
   <ion-app>
-    <ion-router-outlet />
+    <ion-router-outlet v-if="ready" />
   </ion-app>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { onMounted } from 'vue';
 import { initializeAdMob } from './utils/admob';
+import { initializePurchases } from './utils/purchases';
+import { applyTheme, getTheme } from './utils/theme';
+
+const ready = ref(false);
 
 onMounted(async () => {
-  await initializeAdMob();
+  // Initialize the three shared concerns in parallel.
+  // initializePurchases() MUST complete before isPremiumUser() is called
+  // (e.g., from TabsLayout's onMounted banner-show), otherwise the banner
+  // shows briefly to premium users.
+  // try/finally ensures `ready` flips even if one init throws — without it,
+  // a single rejection leaves the router outlet hidden forever (blank screen).
+  try {
+    await Promise.all([
+      getTheme().then(applyTheme),
+      initializePurchases(),
+      initializeAdMob(),
+    ]);
+  } catch (e) {
+    console.error('App init failed:', e);
+  } finally {
+    ready.value = true;
+  }
 });
 </script>
 ```
 
-`initializeAdMob()` is the framework-agnostic util from `ionic-shared` — see [`../../ionic-shared/references/admob.md`](../../ionic-shared/references/admob.md).
+`v-if="ready"` keeps the router outlet from rendering until init completes — prevents flash of incorrect banner state and lets the onboarding `beforeEach` guard's storage read settle.
+
+The shared utils each `init*` call uses live in `../../ionic-shared/references/`:
+
+- `getTheme` / `applyTheme` → [theming.md](../../ionic-shared/references/theming.md)
+- `initializePurchases` → [revenuecat.md](../../ionic-shared/references/revenuecat.md)
+- `initializeAdMob` → [admob.md](../../ionic-shared/references/admob.md)
+
+Onboarding state (`isOnboardingCompleted`) is read on-demand by the `beforeEach` guard — no separate `initialize()` call needed.

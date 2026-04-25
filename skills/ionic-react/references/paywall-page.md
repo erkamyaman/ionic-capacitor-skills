@@ -20,7 +20,7 @@ const subscriptionOptions = [
 const PaywallPage: React.FC = () => {
   const { t } = useTranslation();
   const router = useIonRouter();
-  const { restorePurchases } = usePurchases();
+  const { restore: restorePurchases } = usePurchases();
   const [selectedPlan, setSelectedPlan] = useState('weekly');
 
   const subscribe = async () => {
@@ -33,7 +33,7 @@ const PaywallPage: React.FC = () => {
     router.push('/tabs', 'forward', 'replace');
   };
 
-  const restore = async () => {
+  const handleRestore = async () => {
     const restored = await restorePurchases();
     if (restored) {
       router.push('/tabs', 'forward', 'replace');
@@ -68,7 +68,7 @@ const PaywallPage: React.FC = () => {
             {t('paywall.skip')}
           </IonButton>
 
-          <IonButton fill="clear" size="small" onClick={restore}>
+          <IonButton fill="clear" size="small" onClick={handleRestore}>
             {t('paywall.restore')}
           </IonButton>
         </div>

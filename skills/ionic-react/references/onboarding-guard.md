@@ -21,11 +21,13 @@ export const OnboardingGuard: React.FC<{ children: React.ReactNode }> = ({ child
         setChecked(true);
       }
     });
-  }, []);
+  }, [router]);
 
   return checked ? <>{children}</> : null;
 };
 ```
+
+The `[router]` dependency keeps `react-hooks/exhaustive-deps` quiet. `router` is stable across renders so this never re-fires.
 
 ## Usage
 
