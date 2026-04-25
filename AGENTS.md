@@ -1,152 +1,156 @@
 # AGENTS.md
 
-This file provides guidance to AI agents and contributors working on this skills repository.
+Guidance for AI agents and contributors working on this skills repository.
 
-## Quick Start
+## Quick start
 
 ```bash
 # This is a skills repository — it contains SKILL.md files, NOT runnable code.
-# NEVER run npm install, ionic serve, or ng build in this folder.
-# Skills are installed into projects via:
+# NEVER run npm install, ionic serve, or ng build here.
+# Skills are installed into target projects via:
 npx skills add erkamyaman/ionic-skills
 ```
 
-## Repository Structure
+## Repository structure
 
 ```
 ionic-skills/
 ├── .gitignore
-├── AGENTS.md              # You are here — agent/contributor guide
-├── CLAUDE.md              # Skills overview for Claude agents
-├── README.md              # Public documentation
-├── package.json           # Skills registry (skills array)
+├── AGENTS.md                 # ← you are here
+├── README.md                 # public docs
+├── package.json              # skills registry (skills array)
 └── skills/
-    └── ionic-capacitor/
-        ├── SKILL.md       # Full skill instructions (Angular, React, Vue)
-        └── metadata.json  # Triggers, version, references
+    ├── README.md             # skills index
+    ├── ionic-shared/         # framework-agnostic Capacitor concerns
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── capacitor-config.md
+    │       ├── storage.md
+    │       ├── theming.md
+    │       ├── admob.md
+    │       ├── revenuecat.md
+    │       ├── push-notifications.md
+    │       ├── localization-content.md
+    │       ├── app-store-notes.md
+    │       └── testing-checklist.md
+    ├── ionic-angular/
+    │   ├── SKILL.md
+    │   └── references/       # new-app, project-structure, app-config, routing, services,
+    │                         # signals, onboarding-guard, onboarding-page, paywall-page,
+    │                         # tabs-navigation, settings-page, i18n-ngx-translate,
+    │                         # best-practices, commands
+    ├── ionic-react/
+    │   ├── SKILL.md
+    │   └── references/       # same topics, hooks/ instead of services/, react-i18next
+    └── ionic-vue/
+        ├── SKILL.md
+        └── references/       # same topics, composables/ instead of services/, vue-i18n
 ```
 
-## How Skills Work
+## How skills work
 
-- Each skill lives in `skills/<skill-name>/` with a `SKILL.md` and `metadata.json`
-- `SKILL.md` contains the full instructions that agents follow when building apps
-- `metadata.json` contains triggers (keywords that activate the skill), version, and references
-- `package.json` at the root lists all available skills in the `skills` array
-- `CLAUDE.md` gives agents a quick overview of when to use each skill
+- Each skill lives in `skills/<skill-name>/`.
+- `SKILL.md` carries YAML frontmatter (`name`, `description`, `license`, `metadata.author`, `metadata.version`) and acts as a **router** — short orientation plus links into `references/`.
+- `references/*.md` files cover one focused topic each so the agent loads only what's relevant.
+- Cross-framework topics live in `ionic-shared/references/` and are linked from each framework skill's `SKILL.md`.
+- `package.json`'s `skills` array enumerates the available skills.
 
-## Adding a New Skill
+This layout follows [`angular/angular`'s dev-skills](https://github.com/angular/angular/tree/main/skills/dev-skills).
 
-1. Create a new folder under `skills/`:
+## Adding a new skill
 
-```bash
-mkdir -p skills/my-new-skill
-```
+1. Create the folder:
 
-2. Create `skills/my-new-skill/SKILL.md` with the agent instructions
-3. Create `skills/my-new-skill/metadata.json`:
+   ```bash
+   mkdir -p skills/my-new-skill/references
+   ```
 
-```json
-{
-  "version": "1.0.0",
-  "organization": "erkamyaman",
-  "date": "February 2026",
-  "abstract": "Short description of what the skill covers.",
-  "triggers": [
-    "keyword1",
-    "keyword2"
-  ],
-  "references": [
-    "https://relevant-docs.com"
-  ]
-}
-```
+2. Create `skills/my-new-skill/SKILL.md` with frontmatter:
 
-4. Add the skill name to the `skills` array in `package.json`
-5. Add a description to `CLAUDE.md`
-6. Add a row to the skills table in `README.md`
+   ```markdown
+   ---
+   name: my-new-skill
+   description: One-sentence trigger description so agents know when to load this.
+   license: MIT
+   metadata:
+     author: erkamyaman
+     version: '1.0'
+   ---
 
-## Editing Existing Skills
+   # My New Skill
 
-- Update the `SKILL.md` with corrected or improved instructions
-- Bump the `version` in `metadata.json` if the change is significant
-- Keep code examples accurate — agents will copy them directly into projects
-- Test code examples in a real Ionic Capacitor project (Angular, React, AND Vue) before committing
+   Short orientation. Then links into `references/`.
+   ```
 
-## Skill Writing Guidelines
+3. Add focused topic files in `references/<topic>.md`.
+4. Add the skill name to the `skills` array in `package.json`.
+5. Add a row to the table in `README.md` and to `skills/README.md`.
+
+## Editing existing skills
+
+- Update the relevant `references/<topic>.md` — that's where the meat lives.
+- Update `SKILL.md` only if the orientation, link list, or hard rules change.
+- Bump `metadata.version` in the frontmatter when a change is significant.
+- Keep code examples accurate — agents copy them directly into projects.
+- Test code examples in a real Ionic Capacitor project for the affected framework before committing.
+
+## Skill writing guidelines
 
 ### Do
 
-- Write clear, imperative instructions ("You MUST", "ALWAYS", "NEVER")
-- Include complete, copy-pasteable code examples
-- Specify exact package names and versions
-- List forbidden patterns with alternatives
-- Include both correct and incorrect examples
-- Add a post-creation checklist
-- When a feature has framework-specific implementations, provide parallel examples for Angular, React, and Vue
-- Extract shared Capacitor logic into plain TypeScript utility functions, then show framework-specific wrappers (Angular services, React hooks, Vue composables)
+- Write clear imperative instructions ("ALWAYS", "NEVER", "MUST").
+- Keep each `references/<topic>.md` focused on one topic, with full copy-pasteable code (including imports).
+- Specify exact package names.
+- List forbidden patterns alongside the correct alternative.
+- For each framework's `references/`, link to `../../ionic-shared/references/<topic>.md` rather than duplicate cross-framework content.
 
 ### Don't
 
-- Include runnable code in this repository
-- Reference files that only exist in generated projects
-- Use vague instructions ("consider using", "you might want to")
-- Skip imports in code examples — always show full imports
-- Assume the agent knows Ionic/Angular/React/Vue conventions — be explicit
+- Include runnable code in this repository.
+- Reference files that exist only inside generated projects.
+- Use vague language ("consider using", "you might want to").
+- Skip imports in code examples.
+- Duplicate the same RevenueCat / AdMob / push code in three skills — link to `ionic-shared` instead.
 
-## Pull Request Guidelines
+## Pull request guidelines
 
-We welcome contributions, including AI-generated pull requests. Every PR must include:
+Every PR must include:
 
-### Required Sections
-
-1. **What** - What does this PR change?
-2. **Why** - What is the reason for this change?
-3. **How** - How did you approach the change?
-4. **Testing** - How did you verify the skill instructions are correct?
+1. **What** — what does this PR change?
+2. **Why** — why is it needed?
+3. **How** — implementation approach.
+4. **Testing** — how the skill was verified (which framework, what was scaffolded, what was built).
 
 ### Rules
 
-- All code examples in SKILL.md files must be tested in a real project
-- Keep skills focused — one skill per topic area
-- If you are an AI agent, that is perfectly fine. Just be transparent about it
-- Use correct Turkish characters in any Turkish localization examples (ı, İ, ü, ö, ç, ş, ğ)
+- All code examples must work in a real project for the framework they target.
+- Keep skills focused — one skill per topic area; one topic per `references/` file.
+- AI-authored PRs are welcome — be transparent about it.
+- Use correct Turkish characters in any TR localization examples (`ı İ ü ö ç ş ğ`).
 
-### PR Template
+## Common pitfalls
 
-```
-## What
-- [Brief description of the change]
+- Do NOT run `npm install` or build commands in this repo — it's not a project.
+- Use `@capacitor/preferences` — never `localStorage` or `@ionic/storage`.
+- Use `@capacitor-community/admob` — never deprecated ad libraries.
+- Always show `async/await` for Capacitor plugin calls — they are never synchronous.
 
-## Why
-- [Motivation for this change]
+### Angular-specific
 
-## How
-- [Implementation approach]
+- Standalone components only — no NgModules for new pages.
+- Separate `.html` / `.ts` / `.scss` files via `templateUrl` + `styleUrls` — never inline `template`/`styles`.
+- Import individual Ionic components (`IonButton`, `IonContent`) — never `IonicModule`.
+- **Prefer Signals** for reactive state (`signal()`, `computed()`, `linkedSignal()`, `resource()`). Services should expose state as readonly signals where it makes sense.
 
-## Testing
-- [How you verified the skill instructions work]
-```
+### React-specific
 
-## Common Pitfalls
+- Functional components with hooks only — no class components.
+- Wrap every page in `<IonPage>`.
+- Use `@ionic/react` only — never `@ionic/angular` or `@ionic/vue`.
 
-- Do NOT run `npm install` or any build commands in this repository — it is not a project
-- Use `@capacitor/preferences` — never `localStorage` or `@ionic/storage`
-- Use `@capacitor-community/admob` — never deprecated ad libraries
-- Always show `async/await` for Capacitor plugin calls — they are never synchronous
+### Vue-specific
 
-### Angular-Specific
-
-- Always use standalone components in Angular examples — never NgModules
-- Import individual Ionic components (`IonButton`, `IonContent`) — never `IonicModule`
-
-### React-Specific
-
-- Always use functional components with hooks — never class components
-- Always wrap pages in `<IonPage>` for proper page transitions
-- Use `@ionic/react` — never `@ionic/angular`
-
-### Vue-Specific
-
-- Always use Composition API with `<script setup>` — never Options API
-- Always wrap pages in `<ion-page>` for proper page transitions
-- Use `@ionic/vue` — never `@ionic/angular`
+- Composition API with `<script setup lang="ts">` only — no Options API.
+- Wrap every page in `<ion-page>`.
+- `vue-i18n` with `legacy: false`.
+- Use `@ionic/vue` only — never `@ionic/angular` or `@ionic/react`.

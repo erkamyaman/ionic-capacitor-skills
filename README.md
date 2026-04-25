@@ -1,6 +1,6 @@
 # Ionic Capacitor Skills
 
-A collection of agent skills for building production-ready Ionic Capacitor mobile applications with Angular, React, or Vue.
+A collection of agent skills for building production-ready Ionic Capacitor mobile applications with **Angular**, **React**, or **Vue**.
 
 ## Installation
 
@@ -12,82 +12,82 @@ npx skills add erkamyaman/ionic-skills
 
 | Skill | Description |
 |-------|-------------|
-| [ionic-capacitor](./skills/ionic-capacitor) | Full app scaffold with onboarding, paywall, ads, i18n, theming, and tabs — supports Angular, React, and Vue |
+| [ionic-angular](./skills/ionic-angular) | Ionic + Angular standalone components, lazy routes, Signals, services, `@ngx-translate/core` |
+| [ionic-react](./skills/ionic-react)     | Ionic + React functional components, hooks, `@ionic/react-router`, `react-i18next` |
+| [ionic-vue](./skills/ionic-vue)         | Ionic + Vue 3 Composition API, composables, `@ionic/vue-router`, `vue-i18n` |
+| [ionic-shared](./skills/ionic-shared)   | Framework-agnostic Capacitor concerns — AdMob, RevenueCat, push, storage, theme, localization, store-submission notes. Referenced by all three framework skills |
+
+## Layout
+
+Each skill follows the [`angular/angular` dev-skills](https://github.com/angular/angular/tree/main/skills/dev-skills) pattern:
+
+```
+skills/<skill-name>/
+├── SKILL.md          ← short orientation + links to references/
+└── references/
+    ├── <topic>.md    ← one focused topic per file
+    └── ...
+```
+
+`SKILL.md` is a router. The agent loads only the references/ files it needs for the task at hand.
 
 ## What's Included
 
-### ionic-capacitor
-
-A comprehensive skill that guides AI agents to build complete Ionic Capacitor apps with:
-
 | Feature | Implementation |
-|---------|---------------|
-| **Framework** | Ionic 8 + Angular 19 / React 19 / Vue 3.5 |
-| **Native Runtime** | Capacitor 7 |
-| **Onboarding** | Swipe screens with fullscreen video background + gradient overlay |
-| **Paywall** | RevenueCat with weekly/yearly subscriptions + 50% OFF badge |
-| **Ads** | AdMob banner ads via @capacitor-community/admob |
-| **i18n** | Turkish/English — @ngx-translate (Angular), react-i18next (React), vue-i18n (Vue) |
-| **Theming** | Light/Dark/System with CSS variables |
-| **Navigation** | ion-tabs + framework-specific router |
-| **Storage** | @capacitor/preferences |
-| **Notifications** | @capacitor/push-notifications |
-| **Auth Guard** | Onboarding route guard |
-| **State** | Angular services / React hooks / Vue composables |
+|---------|----------------|
+| **Framework**         | Ionic Framework + Angular / React / Vue (latest stable) |
+| **Native Runtime**    | Capacitor (latest stable) |
+| **Onboarding**        | Swiper slides over a fullscreen HTML5 video + gradient overlay |
+| **Paywall**           | RevenueCat (weekly / yearly with 50% OFF badge) + Restore Purchases |
+| **Ads**               | AdMob banner via `@capacitor-community/admob`, hidden for premium users |
+| **i18n**              | Turkish / English — `@ngx-translate/core` (Angular), `react-i18next` (React), `vue-i18n` (Vue) |
+| **Theming**           | Light / Dark / System via the `ion-palette-dark` class |
+| **Navigation**        | `ion-tabs` + framework-specific router |
+| **Storage**           | `@capacitor/preferences` |
+| **Notifications**     | `@capacitor/push-notifications` |
+| **Onboarding guard**  | `CanActivateFn` (Angular), wrapper component (React), `beforeEach` (Vue) |
+| **State**             | Angular services + Signals / React hooks / Vue composables |
 
-### App Flow
+### App flow
 
 ```
-Onboarding (video bg) -> Paywall (subscriptions) -> Main App (tabs)
+Onboarding (video bg) → Paywall (subscriptions) → Main App (tabs)
 ```
 
-### Required Pages
+### Required pages
 
-- **Onboarding** - Fullscreen video background, swipe-based slides
-- **Paywall** - Weekly/yearly subscription options, restore purchases
-- **Settings** - Language, theme, notifications, remove ads, reset onboarding
-- **Home** - Main content tab
-- **Explore** - Discovery tab
-
-## Usage
-
-Skills activate automatically when agents detect relevant tasks:
-
-- "Create a water reminder app" -> Sets up complete Ionic project with all features
-- "Build a React mobile app" -> Sets up Ionic React project with all features
-- "Build a Vue mobile app" -> Sets up Ionic Vue project with all features
-- "Add onboarding to my app" -> Implements video background onboarding flow
-- "Set up in-app purchases" -> Configures RevenueCat with paywall
-- "Add ads to my Ionic app" -> Integrates AdMob with premium detection
-- "Add dark mode" -> Implements theme switching service
-- "Add Turkish language" -> Sets up i18n with TR/EN
-
-## Tech Stack
-
-- [Ionic Framework](https://ionicframework.com) - UI components
-- [Angular](https://angular.dev) - Application framework
-- [React](https://react.dev) - Application framework
-- [Vue](https://vuejs.org) - Application framework
-- [Capacitor](https://capacitorjs.com) - Native runtime
-- [RevenueCat](https://www.revenuecat.com) - In-app purchases
-- [@capacitor-community/admob](https://github.com/nicol-ograve/capacitor-community-admob) - Advertisements
+- **Onboarding** — fullscreen video background, swipe-based slides
+- **Paywall** — weekly/yearly subscription options, restore purchases
+- **Settings** — language, theme, notifications, remove ads, reset onboarding
+- **Home / Explore / Settings** — three-tab default layout
 
 ## Architecture
 
-The skill uses a **shared utilities + framework wrappers** pattern:
+A **shared utilities + framework wrappers** pattern keeps Capacitor logic in one place:
 
-- **`utils/`** - Framework-agnostic TypeScript functions for Capacitor plugins (AdMob, RevenueCat, Preferences, etc.)
-- **Angular** - `services/` wrapping utilities with `@Injectable`
-- **React** - `hooks/` wrapping utilities with `useCallback`
-- **Vue** - `composables/` wrapping utilities as composable functions
+- **`utils/`** — framework-agnostic TypeScript functions calling Capacitor plugins (AdMob, RevenueCat, Preferences, etc.). Defined once in `ionic-shared`, copied identically into each framework's project.
+- **Angular** — `services/` wrap the utilities with `@Injectable({ providedIn: 'root' })`. Premium status, theme, language exposed as **Signals** so templates re-render reactively.
+- **React** — `hooks/` wrap the utilities with `useCallback`.
+- **Vue** — `composables/` wrap the utilities as functions returning state + actions.
 
-This minimizes duplication and keeps Capacitor logic in one place.
+## Tech stack
+
+- [Ionic Framework](https://ionicframework.com)
+- [Angular](https://angular.dev) / [React](https://react.dev) / [Vue](https://vuejs.org)
+- [Capacitor](https://capacitorjs.com)
+- [RevenueCat](https://www.revenuecat.com)
+- [@capacitor-community/admob](https://github.com/capacitor-community/admob)
 
 ## Contributing
 
-Add new skills by creating a folder in `skills/` with:
-- `SKILL.md` - Instructions for agents
-- `metadata.json` - Skill metadata (version, triggers, references)
+Add a new skill by creating a folder in `skills/<skill-name>/` containing:
+
+- `SKILL.md` — short orientation with frontmatter and a list of references.
+- `references/*.md` — focused topic files referenced from `SKILL.md`.
+
+Then add the skill name to the `skills` array in `package.json` and a row in this README's table.
+
+See [AGENTS.md](./AGENTS.md) for the full contributor guide.
 
 ## License
 

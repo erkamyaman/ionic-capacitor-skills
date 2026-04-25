@@ -26,6 +26,9 @@
   "license": "MIT",
   "author": "erkamyaman",
   "skills": [
-    "ionic-capacitor"
+    "ionic-shared",
+    "ionic-angular",
+    "ionic-react",
+    "ionic-vue"
   ]
 }
