@@ -52,7 +52,15 @@ Use Google's test IDs during development — using a real ad unit ID for testing
 |--------|---------|
 | Banner | `ca-app-pub-3940256099942544/6300978111` |
 
-Replace with the production ad unit ID — and flip both `initializeForTesting` and `isTesting` to `false` — before submitting to the stores.
+> **Don't hardcode the ad unit ID or the testing flag.** Read both from environment variables tied to the build mode. The literal `'ca-app-pub-3940256099942544/6300978111'` and `isTesting: true` shown above are placeholders for a development env file — the production env file points at the real ad unit ID with `isTesting: false`. See [environments-and-keys.md](environments-and-keys.md).
+
+```typescript
+const ADMOB_TESTING = import.meta.env.VITE_ADMOB_TESTING === 'true';     // Vite
+// const ADMOB_TESTING = !environment.production;                         // Angular CLI
+const BANNER_ID = import.meta.env.VITE_ADMOB_BANNER_ID;
+```
+
+Then use those constants instead of the literals in the snippet above.
 
 ## When to show / hide
 

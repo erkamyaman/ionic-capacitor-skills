@@ -14,6 +14,7 @@ Cross-framework guidance for Ionic Capacitor apps. The framework skills (`ionic-
 ## When to consult these references
 
 - **Capacitor config / native platforms**: [capacitor-config.md](references/capacitor-config.md)
+- **Environments & API keys** (env vars per framework, what's safe to ship): [environments-and-keys.md](references/environments-and-keys.md)
 - **Persistent storage** (`@capacitor/preferences`): [storage.md](references/storage.md)
 - **Theme switching** (Light / Dark / System): [theming.md](references/theming.md)
 - **AdMob banner ads**: [admob.md](references/admob.md)
@@ -26,6 +27,8 @@ Cross-framework guidance for Ionic Capacitor apps. The framework skills (`ionic-
 ## Hard rules (apply to all frameworks)
 
 - ✅ **Use the latest stable versions** of Ionic Framework, Capacitor, and the framework (Angular / React / Vue). When scaffolding a new project, do not pin to older majors — let `npm install <pkg>` resolve the latest. Verify against `npm view <pkg> version` if uncertain. Do not write specific version numbers into `SKILL.md` examples — they go stale.
+- ✅ **Read API keys and ad unit IDs from environment variables**, never hardcoded in source. The mobile bundle is not a secret container — only **publishable** keys (RevenueCat SDK key, AdMob unit ID, Firebase web config, Sentry DSN) belong in the app. **Secret** keys (Stripe `sk_…`, OpenAI / Anthropic, RevenueCat REST secret) MUST live behind a backend. See [environments-and-keys.md](references/environments-and-keys.md).
+- ✅ **Tie `isTesting` flags to the build mode**, not a hardcoded `true`. Shipping `initializeForTesting: true` or `isTesting: true` to production can get an AdMob account banned.
 - ❌ NEVER use `localStorage` directly — use `@capacitor/preferences`.
 - ❌ NEVER use `@ionic/storage` — use `@capacitor/preferences`.
 - ❌ NEVER use `cordova-plugin-*` — use the Capacitor equivalent.

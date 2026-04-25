@@ -94,6 +94,26 @@ Two packages, weekly default-selected:
 
 The placeholders `appl_YOUR_IOS_API_KEY` / `goog_YOUR_ANDROID_API_KEY` must be replaced with real keys from the RevenueCat dashboard before any test purchase will work.
 
+> **Don't hardcode the keys in source.** Read them from environment variables — see [environments-and-keys.md](environments-and-keys.md). The RevenueCat **public SDK key** (the `appl_…` / `goog_…` keys above) is safe to ship in the bundle. The RevenueCat **REST API secret** is NOT — it stays on your backend.
+
+```typescript
+const apiKey = Capacitor.getPlatform() === 'ios'
+  ? import.meta.env.VITE_REVENUECAT_KEY_IOS      // Vite
+  : import.meta.env.VITE_REVENUECAT_KEY_ANDROID;
+// or, for Angular CLI:
+// const apiKey = Capacitor.getPlatform() === 'ios'
+//   ? environment.revenueCat.iosKey
+//   : environment.revenueCat.androidKey;
+```
+
+Also tie the log level to the build mode:
+
+```typescript
+await Purchases.setLogLevel({
+  level: environment.production ? LOG_LEVEL.WARN : LOG_LEVEL.DEBUG,
+});
+```
+
 ## App Store / Play Store requirements
 
 - The Restore Purchases button is **required** by Apple — App Review will reject builds that omit it.
