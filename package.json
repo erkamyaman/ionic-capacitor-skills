@@ -18,10 +18,10 @@
     "onboarding",
     "paywall"
   ],
-  "homepage": "https://github.com/erkamyaman/ionic-skills",
+  "homepage": "https://github.com/erkamyaman/ionic-capacitor-skills",
   "repository": {
     "type": "git",
-    "url": "https://github.com/erkamyaman/ionic-skills.git"
+    "url": "https://github.com/erkamyaman/ionic-capacitor-skills.git"
   },
   "license": "MIT",
   "author": "erkamyaman",
