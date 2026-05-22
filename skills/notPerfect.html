@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not Perfect Page</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f4f4;
+}
+header {
+  background: #333;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+nav {
+  background: #555;
+  padding: 10px;
+  text-align: center;
+}
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+.container {
+  width: 90%;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+}
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+button {
+  padding: 10px 15px;
+  border: none;
+  background: #0077cc;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #005fa3;
+}
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #333;
+  color: white;
+}
+.small-text {
+  font-size: 12px;
+  color: gray;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>My Almost Nice Website</h1>
+<p>This page works, but it is not perfect.</p>
+</header>
+<nav>
+<a href="#">Home</a>
+<a href="#">About</a>
+<a href="#">Projects</a>
+<a href="#">Contact</a>
+</nav>
+<main class="container">
+<section>
+<h2>Welcome</h2>
+<p>Hello visitor. This website is simple and kind of messy.</p>
+<p>It has some style, some structure, and no serious errors.</p>
+</section>
+<section class="card">
+<h3>Card One</h3>
+<p>This is the first card. It has basic text inside it.</p>
+<button onclick="sayHello()">Click Me</button>
+</section>
+<section class="card">
+<h3>Card Two</h3>
+<p>This card exists mostly to make the page longer.</p>
+<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ul>
+</section>
+<section class="card">
+<h3>Small Form</h3>
+<label for="name">Name:</label>
+<input id="name" type="text" placeholder="Enter name">
+<br><br>
+<label for="email">Email:</label>
+<input id="email" type="email" placeholder="Enter email">
+<br><br>
+<button onclick="showName()">Submit</button>
+<p id="output" class="small-text"></p>
+</section>
+<section>
+<h2>Random Text</h2>
+<p>This section is not very useful, but it is still valid HTML.</p>
+<p>Sometimes simple pages are good for practice.</p>
+<p>Not every project needs to be perfect at first.</p>
+</section>
+</main>
+<footer>
+<p>Made by someone learning web development.</p>
+</footer>
+<script>
+function sayHello() {
+  alert("Hello! This button works.");
+}
+function showName() {
+  const nameInput = document.getElementById("name");
+  const output = document.getElementById("output");
+  if (nameInput.value.trim() === "") {
+    output.textContent = "You did not write your name.";
+  } else {
+    output.textContent = "Hello, " + nameInput.value + "!";
+  }
+}
+</script>
+</body>
+</html>
