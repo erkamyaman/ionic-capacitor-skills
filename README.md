@@ -5,7 +5,7 @@ A collection of agent skills for building production-ready Ionic Capacitor mobil
 ## Installation
 
 ```bash
-npx skills add erkamyaman/ionic-skills
+npx skills add erkamyaman/ionic-capacitor-skills
 ```
 
 ## Available Skills
