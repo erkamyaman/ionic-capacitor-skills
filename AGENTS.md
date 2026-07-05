@@ -8,13 +8,13 @@ Guidance for AI agents and contributors working on this skills repository.
 # This is a skills repository — it contains SKILL.md files, NOT runnable code.
 # NEVER run npm install, ionic serve, or ng build here.
 # Skills are installed into target projects via:
-npx skills add erkamyaman/ionic-skills
+npx skills add erkamyaman/ionic-capacitor-skills
 ```
 
 ## Repository structure
 
 ```
-ionic-skills/
+ionic-capacitor-skills/
 ├── .gitignore
 ├── AGENTS.md                 # ← you are here
 ├── README.md                 # public docs
