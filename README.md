@@ -42,6 +42,12 @@ npx skills add erkamyaman/ionic-capacitor-skills
 | [ionic-biometric-auth](./skills/ionic-biometric-auth)       | Face ID / Touch ID / fingerprint via `@aparajita/capacitor-biometric-auth` |
 | [ionic-local-notifications](./skills/ionic-local-notifications) | Device-scheduled reminders via `@capacitor/local-notifications` (distinct from push) |
 
+### Form factors
+
+| Skill | Description |
+|-------|-------------|
+| [capacitor-foldable](./skills/capacitor-foldable) | Foldables: layout around the crease, hinge angle and posture, inner vs outer display, Ionic tabs on iPhone Duo, testing on the Duo simulator and foldable emulators |
+
 ### Backend / auth
 
 | Skill | Description |

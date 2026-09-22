@@ -1,6 +1,6 @@
 {
   "name": "@erkamyaman/ionic-skills",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Agent skill for building production-ready Ionic Capacitor mobile applications with Angular, React, or Vue",
   "keywords": [
     "ionic",
@@ -16,7 +16,9 @@
     "revenuecat",
     "admob",
     "onboarding",
-    "paywall"
+    "paywall",
+    "foldable",
+    "iphone-duo"
   ],
   "homepage": "https://github.com/erkamyaman/ionic-capacitor-skills",
   "repository": {
@@ -42,6 +44,7 @@
     "ionic-supabase",
     "ionic-sentry",
     "ionic-analytics",
-    "ionic-in-app-review"
+    "ionic-in-app-review",
+    "capacitor-foldable"
   ]
 }
