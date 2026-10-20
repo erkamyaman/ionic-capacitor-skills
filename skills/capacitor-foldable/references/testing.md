@@ -2,14 +2,14 @@
 
 ## iPhone Duo simulator
 
-Needs the iOS 27.1 runtime, which the device type refuses to go below, and Xcode 27.1 to build against the 27.1 SDK. Build against the 27.0 SDK and the app fills more of the inner display but still leaves gaps; build against anything older and it runs in compatibility mode inside a black border with no fold reported. The iOS 27.2 beta runtime does not run iPhone Duo at all, as observed on this beta. In Xcode 27 the simulator lives inside **DeviceHub.app**, not `Simulator.app`.
+Needs the iOS 27.1 runtime, which the device type refuses to go below. Any Xcode builds and the fold is reported either way, since the plugin falls back to the Objective-C runtime when the SDK predates 27.1. The SDK still decides the window: against 27.1 the app fills the inner display, against 27.0 it leaves gaps, and against anything older it runs in compatibility mode inside a black border. In Xcode 27 the simulator lives inside **DeviceHub.app**, not `Simulator.app`.
 
 ```bash
 open "$(dirname "$(xcode-select -p)")/Applications/DeviceHub.app"
 npx cap run ios     # pick the iPhone Duo
 ```
 
-If several Xcodes are installed, check `xcode-select -p` first, or set `DEVELOPER_DIR` to the 27.1 one for the build, or the app compiles against the wrong SDK and reports no fold.
+If several Xcodes are installed, check `xcode-select -p` first, or set `DEVELOPER_DIR` to the 27.1 one, so the app fills the display properly. The fold is reported from either SDK.
 
 Fold it with the hinge slider in DeviceHub; hold Option for finer control. The inner and outer displays are separate windows.
 
@@ -28,7 +28,7 @@ hinge -d <udid> get
 
 Sweep rather than jumping: an instant change can confuse the simulator's display switching.
 
-Known limitation: taps and key input do not land on the Duo simulator through automation ([XcodeBuildMCP #537](https://github.com/getsentry/XcodeBuildMCP/issues/537)), so scripted UI tests cannot drive it yet. Screenshots work from the terminal with an explicit `--display`; through tooling that cannot pass one, a folded screenshot comes back black because it always targets the inner panel.
+Known limitation: agent and automation tooling does not handle the Duo's two panels yet, and several projects have open bugs about it ([XcodeBuildMCP #537](https://github.com/getsentry/XcodeBuildMCP/issues/537), [claude-code #96941](https://github.com/anthropics/claude-code/issues/96941)). Taps and key input do not land, and some tools keep reporting the closed panel's coordinate space while the phone is open, so scripted UI tests cannot drive it. Work from the terminal instead. Screenshots work from the terminal with an explicit `--display`; through tooling that cannot pass one, a folded screenshot comes back black because it always targets the inner panel.
 
 ## Android foldable emulator
 

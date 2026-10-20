@@ -72,10 +72,11 @@ Apple's compact and regular plus Material's window classes. On iOS the first pai
 ## Where the system put its bars
 
 ```typescript
-const { verticalBarEdge } = await Foldable.getBarPlacement(); // 'leading' | 'trailing' | null
+const { verticalBarEdge, inset } = await Foldable.getBarPlacement();
+// verticalBarEdge: 'leading' | 'trailing' | null, inset: points the bar takes
 ```
 
-`null` means no vertical bar edge is reported: bars are horizontal, or the platform cannot say, which is always the case on Android, web and iOS before 27.1. On iPhone Duo the bar also arrives as a safe-area inset, so simple layouts need nothing beyond `env(safe-area-inset-*)`. Use this when positioning your own chrome to match. `barPlacementChange` fires when it moves.
+`null` means no vertical bar edge is reported: bars are horizontal, or the platform cannot say, which is always the case on Android, web and iOS before 27.1. An app built with an Xcode older than 27.1 cannot read the trait that names the edge, so the plugin infers it from the safe-area inset the bar leaves. On iPhone Duo the bar also arrives as a safe-area inset, so simple layouts need nothing beyond `env(safe-area-inset-*)`. Use this when positioning your own chrome to match. `inset` is how many points the bar takes on its edge, measured rather than assumed, and `0` when no bar is reported: read it instead of hard-coding a width, since it differs when the bar is disabled and Apple can change it. `barPlacementChange` fires when either one moves.
 
 ```typescript
 await Foldable.setVerticalBarBehavior({ behavior: 'disabled' });  // everything horizontal
@@ -107,6 +108,8 @@ await Foldable.stopDualScreen();
 
 `startRearDisplay()` shows a system confirmation first, and `startDualScreen()` rejects outright without a `url`. Both accept `available` or `active`.
 
-`displayModeChange` reports both modes together. Relative URLs resolve against the app's own URL, so `cover.html` has to be a page you ship in the web build, which for a bundler means adding it as an extra entry point. A `data:` URL works too, and is the easier route for dynamic content. That page runs in its own web view with no access to Capacitor plugins, and calling `startDualScreen` again replaces it.
+`displayModeChange` reports both modes together. Relative URLs resolve against the app's own URL, so `cover.html` has to be a page you ship in the web build, which for a bundler means adding it as an extra entry point. A `data:` URL works too, and is the easier route for dynamic content.
+
+The page must be content you wrote: the plugin rejects any other origin, and `encodeURIComponent` is URL encoding rather than HTML escaping, so escape anything you interpolate into a `data:text/html` document. See [android.md](android.md). That page runs in its own web view with no access to Capacitor plugins, and calling `startDualScreen` again replaces it.
 
 Android only; both read as `unsupported` on iOS and web, where the `start` methods reject. See [android.md](android.md).

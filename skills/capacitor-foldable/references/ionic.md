@@ -21,6 +21,24 @@ That turns `ion-tabs` into a side pill exactly where native bars go, and only wh
 
 React and Vue import it from the entry file as usual, since their bundlers ship type shims for CSS.
 
+## Projecting Ionic controls into native UI
+
+Moving the tab bar with CSS is one answer. The other is [`@rdlabo/capacitor-native-ui`](https://github.com/rdlabo-dev/ionic-theme-ios27/tree/main/packages/capacitor-native-ui), which renders existing `ion-back-button`, `ion-buttons`, `ion-button`, `ion-tab-bar` and segment controls with UIKit and SwiftUI while the original elements, state and handlers stay in the WebView. It can put them in the system's vertical rail on iPhone Duo, and it works with an app's existing theme. The optional [`@rdlabo/ionic-theme-ios27`](https://github.com/rdlabo-dev/ionic-theme-ios27) adds iOS 27 styling on top.
+
+The split is clean: this plugin provides device state, Native UI projects the controls, and the theme handles Web styling. Both rdlabo packages list this plugin in their standard setup, installed by the app as a direct dependency:
+
+```sh
+npm install @rdlabo/capacitor-native-ui @erkamyaman/capacitor-foldable
+```
+
+For setup, send the reader to rdlabo's own documentation rather than duplicating it here:
+
+- [Native UI guide](https://github.com/rdlabo-dev/ionic-theme-ios27/tree/main/packages/capacitor-native-ui)
+- [Vertical Bars with an existing Ionic theme](https://github.com/rdlabo-dev/ionic-theme-ios27/blob/main/packages/capacitor-native-ui/docs/ionic-vertical-bars.md)
+- [Migrating from theme 1.2.x](https://github.com/rdlabo-dev/ionic-theme-ios27/blob/main/packages/capacitor-native-ui/docs/migration.md), where the native APIs were still bundled in the theme
+
+Use the CSS stylesheet above when you want Ionic's own tab bar moved, and Native UI when you want the controls rendered natively.
+
 ## A fold fires a keyboard event
 
 iPhone Duo sends a keyboard event when the device folds. Ionic's keyboard controller measures the app container's height the first time the keyboard opens and caches it, then waits for that exact height before showing the tab bar again. After a fold the height no longer matches, so the bar never comes back. Opt in to the fix:
@@ -44,6 +62,10 @@ readonly mode = signal<'game' | 'meter'>('game');
 ```
 
 If you do route, `provideIonicAngular({ animated: false })` removes the slide, but be aware it disables every Ionic animation app-wide, including modals and ripples.
+
+## Apple's rules for the side bar
+
+The vertical bar has an order: primary navigation at the top, then prominent actions. Apple also asks you to prefer a symbol over text there, since anything with a label stays in a horizontal bar. The stylesheet hides the labels visually for that reason but keeps them for VoiceOver, so leave them in your markup.
 
 ## Styling gotcha
 

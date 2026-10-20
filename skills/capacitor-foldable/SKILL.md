@@ -6,13 +6,14 @@ metadata:
   author: erkamyaman
   version: '0.1'
   status: beta
+  checked: 2026-09, against Xcode 27.1, Capacitor 8.5, Play target API 36
 ---
 
 # Capacitor Foldable
 
 Guidance for [`@erkamyaman/capacitor-foldable`](https://github.com/erkamyaman/capacitor-foldable), which reports the fold to a Capacitor web view: where the crease is, the hinge angle, the posture, and which display the app is on.
 
-This skill is new. Everything in it was checked against the plugin source and measured on the iPhone Duo simulator, but it has not been through much real use yet, so [report anything that misleads you](https://github.com/erkamyaman/capacitor-foldable/issues). It is maintained in [the plugin's own repo](https://github.com/erkamyaman/capacitor-foldable/tree/main/skills/capacitor-foldable), which is the copy that ships with the npm package.
+This skill is new. Everything in it was checked against the plugin source and measured on the iPhone Duo simulator, but it has not been through much real use yet, so [report anything that misleads you](https://github.com/erkamyaman/capacitor-foldable/issues).
 
 ## Install
 
@@ -21,7 +22,7 @@ npm install @erkamyaman/capacitor-foldable
 npx cap sync
 ```
 
-Capacitor 8 uses the current major. Capacitor 7 apps install `@erkamyaman/capacitor-foldable@7`, which reports the fold on Android and size classes everywhere, but has no iPhone Duo support: a Capacitor 7 app built with Xcode 27 crashes at launch, because iOS 27 needs the scene lifecycle that Capacitor 8.5 and later adopted. The 7.x line also predates the `--fold-*` variables (8.1.0) and the Ionic tab stylesheets, so the CSS below needs Capacitor 8.
+Capacitor 8 uses the current major. **If you are on Capacitor 7 and building with Xcode 27, upgrade to 8.5 or later before anything else**: those apps crash at launch, because iOS 27 needs the scene lifecycle that only 8.5 adopted, and a crash on launch is an automatic App Review rejection. Capacitor 7 apps can install `@erkamyaman/capacitor-foldable@7` and build with Xcode 26, which reports the fold on Android and size classes everywhere but has no iPhone Duo support. That route closes when Apple requires the iOS 27 SDK in April 2027. The 7.x line also predates the `--fold-*` variables (8.1.0) and the Ionic tab stylesheets, so the CSS below needs Capacitor 8.
 
 ## Start here: CSS before JavaScript
 
@@ -33,7 +34,7 @@ import { Foldable, installFoldablePolyfill } from '@erkamyaman/capacitor-foldabl
 await installFoldablePolyfill();
 ```
 
-Whenever the device reports a fold, that sets `--fold-left`, `--fold-top`, `--fold-width`, `--fold-height` and `--fold-margin-*` on `<html>`, and adds `fold-vertical` or `fold-horizontal`. It also sets the `vertical-bars-*` classes the Ionic stylesheet needs, and fills in the standard Viewport Segments and Device Posture APIs, which Safari and Android's WebView do not provide.
+Whenever the device reports a fold, that sets `--fold-left`, `--fold-top`, `--fold-width`, `--fold-height` and `--fold-margin-*` on `<html>`, and adds `fold-vertical` or `fold-horizontal`. It also sets the `vertical-bars-*` classes the Ionic stylesheet needs, and fills in the standard Viewport Segments and Device Posture APIs. Android's WebView turns both off, and Safari 27.1 has them behind an off-by-default flag that only Safari can set, so a Capacitor web view gets neither. The polyfill stands aside if it ever finds them already there.
 
 Prefer the `--fold-*` variables over the polyfilled segment variables for layout: the segments only split when the fold actually separates the window, which on iPhone Duo means half open, while the fold variables are there when it is open flat too.
 
@@ -84,4 +85,4 @@ npm run build      # or the app's build
 npx cap sync
 ```
 
-Then run it open flat, half open and closed, and fold it shut and open again, which suspends and resumes the web view on iOS. On iPhone Duo the posture picks the display, so that covers both screens; on Android the outer display needs rear display mode. [testing.md](references/testing.md) has the commands.
+Then run it open flat, half open and closed, and fold it shut and open again, which suspends and resumes the web view on iOS. Do one pass at the largest system text size and one with VoiceOver or TalkBack on, since a layout that splits at the crease is exactly where reading order and target sizes go wrong. On iPhone Duo the posture picks the display, so that covers both screens; on Android the outer display needs rear display mode. [testing.md](references/testing.md) has the commands.
